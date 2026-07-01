@@ -55,13 +55,34 @@ nano .env   # 修改 ADMIN_PASSWORD、AI_API_KEY
 
 部署完成后可通过 `http://aigo.toppeertalk.com` 访问。
 
-## 申请 HTTPS（也在 Docker 内完成）
+## 自动申请 HTTPS
+
+在 `.env` 中配置邮箱，部署时**自动申请** Let's Encrypt 证书：
+
+```env
+SSL_EMAIL=你的真实邮箱@example.com
+# DOMAIN=aigo.toppeertalk.com   # 可选，默认已是此域名
+```
+
+```bash
+./deploy/docker-deploy.sh
+```
+
+前提：DNS 已解析到本机，**80 端口**可从公网访问。
+
+### 证书自动续期（建议）
+
+```bash
+sudo ./deploy/docker-ssl-cron.sh   # 每月自动续期
+```
+
+## 手动申请 HTTPS（可选）
+
+若自动申请失败，可单独执行：
 
 ```bash
 SSL_EMAIL=你的邮箱@example.com ./deploy/docker-ssl.sh
 ```
-
-无需在宿主机安装 Nginx 或 Certbot。
 
 ## ~~配置 Nginx + HTTPS~~（宿主机方式，可选）
 

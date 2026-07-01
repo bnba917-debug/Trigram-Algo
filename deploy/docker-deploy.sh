@@ -86,15 +86,32 @@ fi
 
 compose ps
 
+# ---------- 自动申请 SSL ----------
+# shellcheck source=docker-ssl-common.sh
+source "${APP_DIR}/deploy/docker-ssl-common.sh"
+DOMAIN="${DOMAIN:-$(load_env_var DOMAIN)}"
+DOMAIN="${DOMAIN:-aigo.toppeertalk.com}"
+SSL_OK=false
+if auto_setup_ssl; then
+  SSL_OK=true
+fi
+
 echo ""
 info "=========================================="
 info " Docker 部署完成（含 Nginx 容器）"
 info "=========================================="
-info " HTTP 访问 : http://${DOMAIN}  或  http://服务器IP"
-info " 管理后台  : http://${DOMAIN}/admin"
-info ""
-info " 申请 HTTPS:"
-info "   SSL_EMAIL=你的邮箱 ./deploy/docker-ssl.sh"
+if [[ "$SSL_OK" == true ]]; then
+  info " HTTPS 访问: https://${DOMAIN}"
+  info " 管理后台  : https://${DOMAIN}/admin"
+  info ""
+  info " 建议安装证书自动续期:"
+  info "   sudo ./deploy/docker-ssl-cron.sh"
+else
+  info " HTTP 访问 : http://${DOMAIN}  或  http://服务器IP"
+  info " 管理后台  : http://${DOMAIN}/admin"
+  info ""
+  info " 自动 HTTPS: 在 .env 设置 SSL_EMAIL=你的邮箱 后重新运行本脚本"
+fi
 info ""
 info " 常用命令:"
 info "   docker compose ps"

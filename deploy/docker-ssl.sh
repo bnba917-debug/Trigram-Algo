@@ -3,13 +3,12 @@
 # Docker 内申请 Let's Encrypt SSL 证书
 # 前置: ./deploy/docker-deploy.sh 已运行，DNS 已解析
 # 用法: SSL_EMAIL=you@example.com ./deploy/docker-ssl.sh
+#       或在 .env 中配置 SSL_EMAIL 后执行 ./deploy/docker-ssl.sh
 # =============================================================================
 set -euo pipefail
 
 APP_DIR="${APP_DIR:-$(cd "$(dirname "$0")/.." && pwd)}"
 DOMAIN="${DOMAIN:-aigo.toppeertalk.com}"
-EMAIL="${SSL_EMAIL:-}"
-
 cd "${APP_DIR}"
 
 RED='\033[0;31m'
@@ -21,32 +20,28 @@ info()  { echo -e "${GREEN}[INFO]${NC} $*"; }
 warn()  { echo -e "${YELLOW}[WARN]${NC} $*"; }
 error() { echo -e "${RED}[ERROR]${NC} $*" >&2; }
 
-compose() {
-  if docker compose version &>/dev/null; then
-    docker compose "$@"
-  else
-    docker-compose "$@"
-  fi
-}
+# shellcheck source=docker-ssl-common.sh
+source "${APP_DIR}/deploy/docker-ssl-common.sh"
 
-if [[ -z "${EMAIL}" ]]; then
-  error "请设置邮箱: SSL_EMAIL=you@example.com ./deploy/docker-ssl.sh"
+SSL_EMAIL="${SSL_EMAIL:-$(load_env_var SSL_EMAIL)}"
+DOMAIN="${DOMAIN:-$(load_env_var DOMAIN)}"
+DOMAIN="${DOMAIN:-aigo.toppeertalk.com}"
+
+if [[ -z "${SSL_EMAIL}" || "${SSL_EMAIL}" == "你的邮箱@example.com" ]]; then
+  error "请设置邮箱: 在 .env 中配置 SSL_EMAIL，或执行 SSL_EMAIL=you@example.com $0"
   exit 1
 fi
 
+if ssl_cert_exists "${DOMAIN}"; then
+  info "证书已存在，启用 HTTPS..."
+  enable_https_nginx
+  info "SSL 配置完成: https://${DOMAIN}"
+  exit 0
+fi
+
 info "申请证书: ${DOMAIN}"
-
-compose run --rm --profile manual --entrypoint certbot certbot certonly \
-  --webroot \
-  --webroot-path=/var/www/certbot \
-  -d "${DOMAIN}" \
-  --email "${EMAIL}" \
-  --agree-tos \
-  --non-interactive
-
-info "切换到 HTTPS 配置..."
-export NGINX_CONF="${APP_DIR}/deploy/nginx/docker-https.conf"
-compose up -d nginx
+request_ssl_cert "${DOMAIN}" "${SSL_EMAIL}"
+enable_https_nginx
 
 info "SSL 配置完成: https://${DOMAIN}"
 info "证书续期: ./deploy/docker-ssl-renew.sh"
