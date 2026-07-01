@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>天机后台 · 刘伯温预测股市</title>
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>天机后台</h1>
+      <p>管理员可随时录入股票；9:00–14:18 封坛，其余时间开坛示卦</p>
+    </header>
+
+    <section id="login-panel" class="card">
+      <h2>入坛验符</h2>
+      <label>
+        管理员口令
+        <input type="password" id="password" placeholder="请输入口令" autocomplete="current-password">
+      </label>
+      <button id="login-btn">启符入坛</button>
+      <p id="login-error" class="error hidden"></p>
+    </section>
+
+    <section id="admin-panel" class="hidden">
+      <div class="card">
+        <h2>今日卦象</h2>
+        <p id="window-status" class="hint"></p>
+        <div id="today-preview" class="preview empty">今日尚无卦象</div>
+      </div>
+
+      <div class="card">
+        <h2>录入股票 · 生成批注</h2>
+        <div class="form-grid">
+          <label>
+            股票代码
+            <input type="text" id="stock-code" placeholder="如 600519" maxlength="10">
+          </label>
+          <label>
+            股票名称
+            <input type="text" id="stock-name" placeholder="如 贵州茅台">
+          </label>
+        </div>
+        <div class="actions">
+          <button id="save-btn">生成并封存今日天机</button>
+          <button id="regen-btn" class="secondary">重新推演批注</button>
+        </div>
+        <p id="action-message" class="hint"></p>
+      </div>
+
+      <div class="card">
+        <h2>近七日卦录</h2>
+        <ul id="history-list" class="history"></ul>
+      </div>
+    </section>
+
+    <footer>
+      <a href="/">← 返回前台开坛页</a>
+    </footer>
+  </div>
+
+  <script src="/js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+#fx-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 82% 72% at center,
+    transparent 48%,
+    rgba(4, 0, 12, 0.18) 82%,
+    rgba(0, 0, 0, 0.42) 100%
+  );
+  opacity: 0.55;
+}
+
+#fx-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(120, 80, 40, 0.45) 0%,
+    rgba(60, 30, 90, 0.18) 35%,
+    transparent 68%
+  );
+  mix-blend-mode: soft-light;
+  transition: opacity 0.25s ease-out;
+}
+
+#fx-flash.active {
+  opacity: 1;
+}
+
+#fx-flash.fade {
+  opacity: 0;
+  transition: opacity 1.2s ease-out;
+}
+
+#fx-star-rays {
+  display: none;
+}
+
+#fx-mist {
+  position: fixed;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 2s ease;
+  background:
+    radial-gradient(ellipse 70% 45% at 50% 100%, rgba(30, 15, 50, 0.22) 0%, transparent 62%),
+    radial-gradient(ellipse 50% 35% at 50% 50%, rgba(20, 10, 40, 0.08) 0%, transparent 55%);
+  animation: none;
+}
+
+#fx-mist.active {
+  opacity: 0.45;
+}

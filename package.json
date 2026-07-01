@@ -1,0 +1,19 @@
+{
+  "name": "trigram-algo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "刘伯温预测股市 - AI玄学娱乐站",
+  "scripts": {
+    "start": "node backend/src/index.js",
+    "dev": "node --watch backend/src/index.js",
+    "test": "node --test backend/tests/**/*.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.9.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  }
+}

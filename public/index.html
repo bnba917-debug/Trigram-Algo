@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>刘伯温预测股市 - 星辰天机</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/effects.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+
+<div id="ui-overlay">
+    <div id="ui-content" class="is-locked">
+        <span class="corner corner-tl" aria-hidden="true"></span>
+        <span class="corner corner-tr" aria-hidden="true"></span>
+        <span class="corner corner-bl" aria-hidden="true"></span>
+        <span class="corner corner-br" aria-hidden="true"></span>
+
+        <header class="panel-header">
+            <span id="status-badge" class="status-badge closed">封坛中</span>
+            <h1>刘伯温预测股市</h1>
+            <p class="sub-title">神机妙算 · 窥探天机</p>
+            <div class="header-divider" aria-hidden="true"></div>
+        </header>
+
+        <div id="status-panel">
+            <p class="schedule-chip">每日 9:00 – 14:18 封坛 · 其余时辰可窥</p>
+            <p class="timer-label" id="timer-label">距离下一次开坛还有</p>
+            <div class="countdown-box">
+                <div id="countdown">--:--:--</div>
+            </div>
+            <button id="predict-btn" type="button" onclick="startPrediction()">
+                <span class="btn-glow" aria-hidden="true"></span>
+                启坛引星辰
+            </button>
+        </div>
+
+        <div id="stock-result">
+            <div class="stock-info">
+                <span class="stock-code" id="res-code">------</span>
+                <span class="stock-name" id="res-name">加载中...</span>
+            </div>
+            <div class="ai-reason">
+                <div class="ai-reason-label">伯温天机 · 星辰批注</div>
+                <div id="res-reason">正在以周易八卦推演此股玄机...</div>
+            </div>
+            <button id="predict-btn-reload" type="button" onclick="location.reload()" class="btn-close">收盘谢坛</button>
+        </div>
+
+        <footer id="disclaimer">
+            本站内容纯属 AI 玄学娱乐，不构成投资建议。股市有风险，盈亏自负。
+        </footer>
+    </div>
+</div>
+
+<script src="/js/effectsOverlay.js"></script>
+<script src="/js/mysticAmbience.js"></script>
+<script src="/js/starPower.js"></script>
+<script src="/js/hexagramData.js"></script>
+<script src="/js/hexagramRing.js"></script>
+<script src="/js/digitRain.js"></script>
+<script src="/js/main.js"></script>
+</body>
+</html>
