@@ -148,6 +148,36 @@ chmod 755 data
 chown -R $USER:$USER data
 ```
 
+### better-sqlite3 安装失败（GLIBC_2.29 not found）
+
+常见于 **CentOS 7 / 旧版 RHEL**，预编译包需要 GLIBC 2.29+，需从源码编译：
+
+```bash
+# 1. 安装编译依赖（需 root）
+sudo ./deploy/install-build-deps.sh
+
+# 2. CentOS 7 若 gcc 过旧，安装新版编译器
+sudo yum install -y centos-release-scl
+sudo yum install -y devtoolset-11-gcc devtoolset-11-gcc-c++
+scl enable devtoolset-11 bash
+
+# 3. 拉取最新代码后重新安装
+cd /var/www/trigram-algo
+git pull
+chmod +x deploy/*.sh
+./deploy/npm-install.sh
+
+# 4. 验证
+node -e "require('better-sqlite3'); console.log('OK')"
+```
+
+若 Python 版本过低（< 3.7），设置：
+
+```bash
+export PYTHON=/usr/bin/python3.8   # 或 python3.9
+./deploy/npm-install.sh
+```
+
 ## 自定义部署路径
 
 ```bash

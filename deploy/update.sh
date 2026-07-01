@@ -21,7 +21,7 @@ info "拉取最新代码..."
 git pull --ff-only origin master 2>/dev/null || git pull --ff-only origin main
 
 info "安装依赖..."
-npm ci --omit=dev 2>/dev/null || npm install --omit=dev
+bash "${APP_DIR}/deploy/npm-install.sh"
 
 info "重载 PM2..."
 pm2 reload deploy/ecosystem.config.cjs --update-env

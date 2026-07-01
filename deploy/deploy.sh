@@ -83,7 +83,7 @@ fi
 
 # ---------- 安装依赖 ----------
 info "安装 npm 依赖..."
-npm ci --omit=dev 2>/dev/null || npm install --omit=dev
+bash "${APP_DIR}/deploy/npm-install.sh"
 
 # ---------- 环境变量 ----------
 if [[ ! -f "${APP_DIR}/.env" ]]; then
