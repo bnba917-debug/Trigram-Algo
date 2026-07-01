@@ -67,8 +67,16 @@ if grep -qE '^ADMIN_PASSWORD=(请替换|changeme|$)' "${APP_DIR}/.env" 2>/dev/nu
   exit 1
 fi
 
+# shellcheck source=docker-ssl-common.sh
+source "${APP_DIR}/deploy/docker-ssl-common.sh"
+DOMAIN="${DOMAIN:-$(load_env_var DOMAIN)}"
+DOMAIN="${DOMAIN:-aigo.toppeertalk.com}"
+
 info "构建 Docker 镜像..."
 compose build --pull
+
+select_nginx_conf "$DOMAIN"
+info "Nginx 配置: ${NGINX_CONF##*/}"
 
 info "启动容器..."
 compose up -d trigram-algo nginx
@@ -87,10 +95,6 @@ fi
 compose ps
 
 # ---------- 自动申请 SSL ----------
-# shellcheck source=docker-ssl-common.sh
-source "${APP_DIR}/deploy/docker-ssl-common.sh"
-DOMAIN="${DOMAIN:-$(load_env_var DOMAIN)}"
-DOMAIN="${DOMAIN:-aigo.toppeertalk.com}"
 SSL_OK=false
 if auto_setup_ssl; then
   SSL_OK=true

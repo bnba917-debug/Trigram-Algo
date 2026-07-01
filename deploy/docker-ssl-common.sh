@@ -55,6 +55,15 @@ enable_https_nginx() {
   docker_compose up -d nginx
 }
 
+select_nginx_conf() {
+  local domain="${1:-${DOMAIN:-aigo.toppeertalk.com}}"
+  if ssl_cert_exists "$domain"; then
+    export NGINX_CONF="${APP_DIR}/deploy/nginx/docker-https.conf"
+  else
+    export NGINX_CONF="${APP_DIR}/deploy/nginx/docker-http.conf"
+  fi
+}
+
 auto_setup_ssl() {
   local domain="${DOMAIN:-aigo.toppeertalk.com}"
   SSL_EMAIL="${SSL_EMAIL:-$(load_env_var SSL_EMAIL)}"
