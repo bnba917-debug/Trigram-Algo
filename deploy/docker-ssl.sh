@@ -27,9 +27,10 @@ SSL_EMAIL="${SSL_EMAIL:-$(load_env_var SSL_EMAIL)}"
 DOMAIN="${DOMAIN:-$(load_env_var DOMAIN)}"
 DOMAIN="${DOMAIN:-aigo.toppeertalk.com}"
 
-if [[ -z "${SSL_EMAIL}" || "${SSL_EMAIL}" == "你的邮箱@example.com" ]]; then
-  error "请设置邮箱: 在 .env 中配置 SSL_EMAIL，或执行 SSL_EMAIL=you@example.com $0"
-  exit 1
+if [[ -n "${SSL_EMAIL}" && "${SSL_EMAIL}" != "你的邮箱@example.com" ]]; then
+  info "申请证书: ${DOMAIN} (${SSL_EMAIL})"
+else
+  info "申请证书: ${DOMAIN}（无邮箱）"
 fi
 
 if ssl_cert_exists "${DOMAIN}"; then
@@ -39,7 +40,6 @@ if ssl_cert_exists "${DOMAIN}"; then
   exit 0
 fi
 
-info "申请证书: ${DOMAIN}"
 request_ssl_cert "${DOMAIN}" "${SSL_EMAIL}"
 enable_https_nginx
 

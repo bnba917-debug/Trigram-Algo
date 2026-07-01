@@ -57,15 +57,17 @@ nano .env   # 修改 ADMIN_PASSWORD、AI_API_KEY
 
 ## 自动申请 HTTPS
 
-在 `.env` 中配置邮箱，部署时**自动申请** Let's Encrypt 证书：
+部署时**默认自动申请** Let's Encrypt 证书，**无需配置邮箱**。
+
+```bash
+./deploy/docker-deploy.sh
+```
+
+可选：在 `.env` 中填写邮箱，证书到期前会收到邮件提醒：
 
 ```env
 SSL_EMAIL=你的真实邮箱@example.com
 # DOMAIN=aigo.toppeertalk.com   # 可选，默认已是此域名
-```
-
-```bash
-./deploy/docker-deploy.sh
 ```
 
 前提：DNS 已解析到本机，**80 端口**可从公网访问。

@@ -28,19 +28,26 @@ ssl_cert_exists() {
 request_ssl_cert() {
   local domain="${1:-$DOMAIN}"
   local email="${2:-$SSL_EMAIL}"
+  local -a args
 
-  if [[ -z "$email" ]]; then
-    return 1
+  args=(
+    certonly
+    --webroot
+    --webroot-path=/var/www/certbot
+    -d "${domain}"
+    --agree-tos
+    --non-interactive
+    --keep-until-expiring
+  )
+
+  if [[ -n "$email" && "$email" != "你的邮箱@example.com" ]]; then
+    args+=(--email "${email}")
+  else
+    args+=(--register-unsafely-without-email)
+    warn "未设置 SSL_EMAIL，使用无邮箱申请（到期前不会收到邮件提醒）"
   fi
 
-  docker_compose run --rm --profile manual --entrypoint certbot certbot certonly \
-    --webroot \
-    --webroot-path=/var/www/certbot \
-    -d "${domain}" \
-    --email "${email}" \
-    --agree-tos \
-    --non-interactive \
-    --keep-until-expiring
+  docker_compose run --rm --profile manual --entrypoint certbot certbot "${args[@]}"
 }
 
 enable_https_nginx() {
@@ -59,13 +66,12 @@ auto_setup_ssl() {
     return 0
   fi
 
-  if [[ -z "$SSL_EMAIL" || "$SSL_EMAIL" == "你的邮箱@example.com" ]]; then
-    warn "未配置 SSL_EMAIL，跳过自动申请证书（仅 HTTP）"
-    warn "在 .env 中设置 SSL_EMAIL=你的邮箱 后重新运行 ./deploy/docker-deploy.sh"
-    return 1
+  if [[ -n "$SSL_EMAIL" && "$SSL_EMAIL" != "你的邮箱@example.com" ]]; then
+    info "自动申请 SSL 证书: ${DOMAIN} (${SSL_EMAIL})"
+  else
+    info "自动申请 SSL 证书: ${DOMAIN}（无邮箱）"
   fi
 
-  info "自动申请 SSL 证书: ${DOMAIN} (${SSL_EMAIL})"
   if request_ssl_cert "$DOMAIN" "$SSL_EMAIL"; then
     info "证书申请成功，切换到 HTTPS..."
     enable_https_nginx
@@ -73,6 +79,6 @@ auto_setup_ssl() {
   fi
 
   warn "证书申请失败，请确认 DNS 已解析且 80 端口可从公网访问"
-  warn "稍后手动执行: SSL_EMAIL=${SSL_EMAIL} ./deploy/docker-ssl.sh"
+  warn "稍后手动执行: ./deploy/docker-ssl.sh"
   return 1
 }

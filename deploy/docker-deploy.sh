@@ -110,7 +110,7 @@ else
   info " HTTP 访问 : http://${DOMAIN}  或  http://服务器IP"
   info " 管理后台  : http://${DOMAIN}/admin"
   info ""
-  info " 自动 HTTPS: 在 .env 设置 SSL_EMAIL=你的邮箱 后重新运行本脚本"
+  info " HTTPS 申请失败，请检查 DNS / 80 端口后重新运行 ./deploy/docker-deploy.sh"
 fi
 info ""
 info " 常用命令:"
