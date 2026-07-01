@@ -71,7 +71,7 @@ info "构建 Docker 镜像..."
 compose build --pull
 
 info "启动容器..."
-compose up -d
+compose up -d trigram-algo nginx
 
 info "等待健康检查..."
 sleep 8

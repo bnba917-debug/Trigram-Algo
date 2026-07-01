@@ -27,8 +27,8 @@ fi
 
 info "重新构建并启动..."
 compose build
-compose up -d
+compose up -d trigram-algo nginx
 
 sleep 3
 compose ps
-curl -sf "http://127.0.0.1:3000/api/status" && info "健康检查通过" || info "请检查: docker compose logs -f"
+curl -sf "http://127.0.0.1/api/status" && info "健康检查通过" || info "请检查: docker compose logs -f"

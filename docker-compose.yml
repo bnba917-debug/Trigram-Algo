@@ -49,8 +49,7 @@ services:
       - certbot-certs:/etc/letsencrypt
     networks:
       - trigram-net
-    profiles:
-      - manual
+    entrypoint: /bin/true
 
 volumes:
   trigram-data:

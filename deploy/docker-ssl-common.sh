@@ -21,7 +21,7 @@ load_env_var() {
 
 ssl_cert_exists() {
   local domain="${1:-$DOMAIN}"
-  docker_compose run --rm --profile manual --entrypoint test certbot \
+  docker_compose run --rm --no-deps --entrypoint test certbot \
     -f "/etc/letsencrypt/live/${domain}/fullchain.pem" 2>/dev/null
 }
 
@@ -47,7 +47,7 @@ request_ssl_cert() {
     warn "未设置 SSL_EMAIL，使用无邮箱申请（到期前不会收到邮件提醒）"
   fi
 
-  docker_compose run --rm --profile manual --entrypoint certbot certbot "${args[@]}"
+  docker_compose run --rm --no-deps --entrypoint certbot certbot "${args[@]}"
 }
 
 enable_https_nginx() {

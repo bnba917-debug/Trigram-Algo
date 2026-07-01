@@ -16,7 +16,7 @@ compose() {
   fi
 }
 
-compose run --rm --profile manual --entrypoint certbot certbot renew --quiet
+compose run --rm --no-deps --entrypoint certbot certbot renew --quiet
 export NGINX_CONF="${APP_DIR}/deploy/nginx/docker-https.conf"
 compose exec nginx nginx -s reload 2>/dev/null || compose restart nginx
 
