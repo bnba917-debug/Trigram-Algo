@@ -74,10 +74,12 @@ info "启动容器..."
 compose up -d
 
 info "等待健康检查..."
-sleep 5
+sleep 8
 
-if curl -sf "http://127.0.0.1:3000/api/status" >/dev/null 2>&1; then
-  info "应用健康检查通过"
+if curl -sf "http://127.0.0.1/api/status" >/dev/null 2>&1; then
+  info "Nginx 反代健康检查通过 (http://127.0.0.1)"
+elif curl -sf "http://127.0.0.1:3000/api/status" >/dev/null 2>&1; then
+  info "应用健康检查通过（Nginx 可能未就绪）"
 else
   warn "健康检查未通过，查看日志: docker compose logs -f"
 fi
@@ -86,25 +88,16 @@ compose ps
 
 echo ""
 info "=========================================="
-info " Docker 部署完成"
+info " Docker 部署完成（含 Nginx 容器）"
 info "=========================================="
-info " 本地地址 : http://127.0.0.1:3000"
-info " 域名     : https://${DOMAIN}"
+info " HTTP 访问 : http://${DOMAIN}  或  http://服务器IP"
+info " 管理后台  : http://${DOMAIN}/admin"
+info ""
+info " 申请 HTTPS:"
+info "   SSL_EMAIL=你的邮箱 ./deploy/docker-ssl.sh"
 info ""
 info " 常用命令:"
 info "   docker compose ps"
 info "   docker compose logs -f"
 info "   ./deploy/docker-update.sh"
 info ""
-
-if [[ $EUID -ne 0 ]]; then
-  warn "Nginx 配置需要 root，请执行:"
-  echo "  sudo ${APP_DIR}/deploy/nginx-install.sh"
-else
-  bash "${APP_DIR}/deploy/nginx-install.sh"
-fi
-
-if [[ ! -f "/etc/letsencrypt/live/${DOMAIN}/fullchain.pem" ]]; then
-  warn "尚未配置 SSL，请执行:"
-  echo "  SSL_EMAIL=your@email.com sudo ${APP_DIR}/deploy/ssl-setup.sh"
-fi

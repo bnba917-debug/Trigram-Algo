@@ -5,10 +5,12 @@
 ## 架构
 
 ```text
-用户 → Nginx (443) → 127.0.0.1:3000 → Docker 容器 (trigram-algo)
-                                              ↓
-                                        SQLite 数据卷
+用户 → Nginx 容器 (80/443) → trigram-algo 容器 (3000) → SQLite 数据卷
+                ↑
+         certbot 容器（申请证书时临时运行）
 ```
+
+**无需在宿主机安装 Nginx 或 Node.js**，只需安装 Docker。
 
 ## 前置条件
 
@@ -17,7 +19,7 @@
 | Docker | 20.10+ |
 | Docker Compose | v2（`docker compose`） |
 | 域名 DNS | `aigo` A 记录 → 服务器 IP |
-| 端口 | 80、443 开放；3000 仅本机 |
+| 端口 | 80、443 开放（安全组 + 防火墙） |
 
 ## 安装 Docker（CentOS 8）
 
@@ -47,18 +49,28 @@ chmod +x deploy/*.sh
 cp deploy/env.production.example .env
 nano .env   # 修改 ADMIN_PASSWORD、AI_API_KEY
 
-# 构建并启动
+# 构建并启动（含 Nginx 容器）
 ./deploy/docker-deploy.sh
 ```
 
-## 配置 Nginx + HTTPS
+部署完成后可通过 `http://aigo.toppeertalk.com` 访问。
+
+## 申请 HTTPS（也在 Docker 内完成）
+
+```bash
+SSL_EMAIL=你的邮箱@example.com ./deploy/docker-ssl.sh
+```
+
+无需在宿主机安装 Nginx 或 Certbot。
+
+## ~~配置 Nginx + HTTPS~~（宿主机方式，可选）
+
+若不想用 Docker 内 Nginx，才需要：
 
 ```bash
 sudo ./deploy/nginx-install.sh
 SSL_EMAIL=your@email.com sudo ./deploy/ssl-setup.sh
 ```
-
-Nginx 反代到 `127.0.0.1:3000`，与 PM2 方式相同。
 
 ## 常用命令
 
@@ -77,6 +89,9 @@ docker compose down
 
 # 更新代码并重新部署
 ./deploy/docker-update.sh
+
+# 续期证书（可加入 crontab，每月执行）
+./deploy/docker-ssl-renew.sh
 ```
 
 ## 数据持久化
