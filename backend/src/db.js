@@ -31,12 +31,7 @@ function initDb() {
   return db;
 }
 
-function getTodayDateString(date = new Date()) {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
-}
+const { getTodayDateString } = require('./services/timezone');
 
 function getPredictionByDate(db, date) {
   return db.prepare('SELECT * FROM predictions WHERE date = ?').get(date);

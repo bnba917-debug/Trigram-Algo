@@ -13,6 +13,8 @@ services:
     environment:
       NODE_ENV: production
       PORT: "3000"
+      TZ: Asia/Shanghai
+      BUSINESS_TZ: Asia/Shanghai
     volumes:
       - trigram-data:/app/data
       - trigram-logs:/app/logs

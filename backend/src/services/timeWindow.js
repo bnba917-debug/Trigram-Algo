@@ -1,25 +1,22 @@
 'use strict';
 
-/** 封坛起始：每日 9:00 起天机不可窥 */
+const { getZonedParts, makeZonedDate } = require('./timezone');
+
+/** 封坛起始：每日 9:00 起天机不可窥（北京时间） */
 const SEAL_START = { hour: 9, minute: 0, second: 0 };
-/** 开坛时刻：每日 14:18 解封 */
+/** 开坛时刻：每日 14:18 解封（北京时间） */
 const UNLOCK_AT = { hour: 14, minute: 18, second: 0 };
 
 function toSecondsOfDay(date) {
-  return date.getHours() * 3600 + date.getMinutes() * 60 + date.getSeconds();
-}
-
-function setTimeOnDate(base, { hour, minute, second }) {
-  const d = new Date(base);
-  d.setHours(hour, minute, second, 0);
-  return d;
+  const p = getZonedParts(date);
+  return p.hour * 3600 + p.minute * 60 + p.second;
 }
 
 function toDaySeconds({ hour, minute, second = 0 }) {
   return hour * 3600 + minute * 60 + second;
 }
 
-/** 是否处于封坛时段 9:00 – 14:18（不含 14:18） */
+/** 是否处于封坛时段 9:00 – 14:18（不含 14:18，北京时间） */
 function isSealedWindow(now = new Date()) {
   const seconds = toSecondsOfDay(now);
   const sealStart = toDaySeconds(SEAL_START);
@@ -28,11 +25,31 @@ function isSealedWindow(now = new Date()) {
 }
 
 function getNextUnlockTime(from = new Date()) {
-  const todayUnlock = setTimeOnDate(from, UNLOCK_AT);
+  const p = getZonedParts(from);
+  const todayUnlock = makeZonedDate({
+    year: p.year,
+    month: p.month,
+    day: p.day,
+    ...UNLOCK_AT,
+  });
   if (from < todayUnlock) return todayUnlock;
-  const tomorrow = new Date(from);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  return setTimeOnDate(tomorrow, UNLOCK_AT);
+
+  const midnight = makeZonedDate({
+    year: p.year,
+    month: p.month,
+    day: p.day,
+    hour: 0,
+    minute: 0,
+    second: 0,
+  });
+  const nextDay = new Date(midnight.getTime() + 24 * 60 * 60 * 1000);
+  const np = getZonedParts(nextDay);
+  return makeZonedDate({
+    year: np.year,
+    month: np.month,
+    day: np.day,
+    ...UNLOCK_AT,
+  });
 }
 
 function getSiteStatus(now = new Date(), debugUnlock = false) {

@@ -25,6 +25,8 @@ RUN mkdir -p data logs \
 
 ENV NODE_ENV=production
 ENV PORT=3000
+ENV TZ=Asia/Shanghai
+ENV BUSINESS_TZ=Asia/Shanghai
 
 EXPOSE 3000
 
