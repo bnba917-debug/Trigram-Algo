@@ -2,11 +2,24 @@
 
 将「刘伯温预测股市」部署到 `toppeertalk.com` 服务器子域名。
 
+> **CentOS 8 / 旧版 Linux 推荐 Docker 部署**，避免 `better-sqlite3` 编译问题。  
+> 详见 **[deploy/DOCKER.md](./DOCKER.md)**
+
+## 部署方式选择
+
+| 方式 | 适用场景 | 文档 |
+|------|----------|------|
+| **Docker**（推荐） | CentOS 8、GLIBC 旧、不想装 Node | [DOCKER.md](./DOCKER.md) |
+| PM2 | 较新 Linux、已装 Node 18+ | 下文 |
+
 ## 目录结构
 
 ```
 deploy/
-├── deploy.sh                          # 首次部署（应用 + PM2）
+├── docker-deploy.sh                   # Docker 首次部署
+├── docker-update.sh                   # Docker 日常更新
+├── DOCKER.md                          # Docker 部署文档
+├── deploy.sh                          # PM2 首次部署
 ├── update.sh                          # 日常更新
 ├── nginx-install.sh                   # 安装 Nginx 站点（需 sudo）
 ├── ssl-setup.sh                       # 申请 Let's Encrypt 证书（需 sudo）
@@ -26,7 +39,30 @@ deploy/
 | 域名 DNS | `A` 记录 `aigo` → 服务器公网 IP |
 | 端口 | 80、443 已开放 |
 
-## 一键部署流程
+## Docker 快速部署（CentOS 8 推荐）
+
+```bash
+# 1. 安装 Docker
+sudo dnf install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+sudo systemctl enable --now docker
+
+# 2. 克隆并配置
+cd /var/www/trigram-algo
+git pull --ff-only origin master
+cp deploy/env.production.example .env && nano .env
+
+# 3. 启动
+chmod +x deploy/*.sh
+./deploy/docker-deploy.sh
+
+# 4. Nginx + HTTPS
+sudo ./deploy/nginx-install.sh
+SSL_EMAIL=you@email.com sudo ./deploy/ssl-setup.sh
+```
+
+完整说明见 [DOCKER.md](./DOCKER.md)。
+
+## PM2 一键部署流程
 
 ### 1. SSH 登录服务器
 

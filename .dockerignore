@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+
+# Git / IDE
+.git/
+.gitignore
+.cursor/
+.cursorrules
+
+# Runtime data (mounted as volumes)
+data/
+logs/
+*.db
+*.db-shm
+*.db-wal
+
+# Secrets
+.env
+.env.*
+
+# Docs / dev
+docs/
+PRD.md
+*.md
+!README.md
+
+# Deploy scripts not needed in image
+deploy/*.sh
